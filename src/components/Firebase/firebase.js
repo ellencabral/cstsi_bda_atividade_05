@@ -1,9 +1,11 @@
 import { initializeApp } from 'firebase/app'
 import {
-    getAuth
+    createUserWithEmailAndPassword,
+    getAuth,
+    signInWithEmailAndPassword
 } from 'firebase/auth';
 import {
-    getDatabase
+    getDatabase, set, ref
 } from "firebase/database"
 // import { getAuth } from 'firebase/auth';
 
@@ -24,14 +26,18 @@ class Firebase {
         this.db = getDatabase(this.app)
         this.auth = getAuth();
         this.isLogged = false;
-        this.credentials =null;
+        this.credentials = null;
     }
 
     // *** AUTH API ***
     async doCreateUserWithEmailAndPassword(email, password) {
         try {
-           //implemente aqui a função para criar um usuário
-           throw new Error("Função indisponível") //remova essa linha
+            const credentials = await createUserWithEmailAndPassword(this.auth, email, password)
+
+            await set(ref(this.db, 'users/' + credentials.user.uid), {
+                "email": email,
+                "role": 'user',
+            })
         } catch (error) {
             console.error(error.message)
             throw error;
@@ -45,7 +51,10 @@ class Firebase {
             ao atributo this.isLogged e as credenciais ao atributo this.credentials
             deverá retornar a propriedade user do atributo this.credentials.user
             */
-           //implemente aqui função logar o usuario
+            this.isLogged = true
+            this.credentials = await signInWithEmailAndPassword(this.auth,email,password)
+
+            return this.credentials.user
            throw new Error("Função Indisponível!!") //remova essa linha
         } catch (error) {
             console.error(error.message)

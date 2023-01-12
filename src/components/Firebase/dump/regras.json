@@ -1,0 +1,15 @@
+{
+    "rules": {
+    "produtos": {
+        ".read": true,
+        ".write": "root.child('users/'+auth.uid+'/role').val()==='admin'",
+        ".indexOn": ["preco","qtd_estoque","id_prod"]
+    },
+    "users": {
+        "$uid": {
+        ".write": "$uid===auth.uid",
+        ".read": "$uid===auth.uid"
+        }
+    }
+    }
+}
